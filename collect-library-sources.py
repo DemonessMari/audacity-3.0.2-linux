@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Collect Ubuntu source packages and copyright notices for deployed libraries."""
-import json, pathlib, shutil, subprocess, sys
+import json, pathlib, shutil, subprocess, sys, os
 appdir, dest = map(pathlib.Path, sys.argv[1:])
 lookup = {}
 for line in subprocess.check_output(['ldconfig', '-p'], text=True).splitlines():
@@ -37,7 +37,8 @@ for lib in sorted((appdir / 'usr/lib').rglob('*.so*')):
     if notice.exists():
         target = appdir / 'usr/share/doc/bundled-libraries' / (owned.split(':')[0] + '-copyright')
         shutil.copyfile(notice, target)
-for source in sorted(packages):
-    subprocess.run(['apt-get', 'source', '--download-only', source], cwd=dest, check=True)
+if os.environ.get('DOWNLOAD_SOURCES', '1') != '0':
+    for source in sorted(packages):
+        subprocess.run(['apt-get', 'source', '--download-only', source], cwd=dest, check=True)
 (appdir / 'usr/share/doc/bundled-libraries/manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
 (dest / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')

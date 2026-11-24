@@ -4,6 +4,16 @@ root=$(cd -- "$(dirname -- "$0")" && pwd)
 work=${BUILD_WORK_DIR:-"$root/work"}
 mkdir -p "$work" "$root/dist"
 cd "$work"
+make_source_archive() {
+ mkdir -p AppDir/usr/share/doc/bundled-libraries source-dependencies
+ python3 "$root/collect-library-sources.py" AppDir source-dependencies
+tar --exclude=.git --exclude=wxWidgets/libs \
+ -czf "$root/dist/Audacity-3.0.2-corresponding-source.tar.gz" \
+ src wxWidgets source-dependencies -C "$root" build-appimage.sh collect-library-sources.py bundle-runtime.py make-self-contained.py AppRun patches audacity-3.0.2.desktop LICENSE.txt
+cd "$root/dist"
+sha256sum ./*.AppImage ./*.run ./*.tar.gz > SHA256SUMS
+}
+if [[ ${SOURCE_ONLY:-0} == 1 ]]; then make_source_archive; exit 0; fi
 source_url=https://github.com/audacity/audacity/releases/download/Audacity-3.0.2/audacity-minsrc-3.0.2.tar.xz
 if [[ ! -f audacity-minsrc-3.0.2.tar.xz ]]; then curl -fL --retry 3 "$source_url" -o audacity-minsrc-3.0.2.tar.xz; fi
 echo '728d6459931da006ed45a31e63b7fe6ca47a2547459a2aff3bf0880cef85c296  audacity-minsrc-3.0.2.tar.xz' | sha256sum -c -
@@ -42,14 +52,9 @@ chmod +x AppDir/AppRun
 python3 "$root/bundle-runtime.py" AppDir
 # Preserve licensing notices and collect exact distro source archives for bundled libraries.
 mkdir -p AppDir/usr/share/doc/bundled-libraries source-dependencies
-python3 "$root/collect-library-sources.py" AppDir source-dependencies
+DOWNLOAD_SOURCES=0 python3 "$root/collect-library-sources.py" AppDir source-dependencies
 cp "$root/LICENSE.txt" AppDir/usr/share/doc/audacity/COPYING
 ARCH=x86_64 VERSION=3.0.2 OUTPUT="$root/dist/Audacity-3.0.2-linux-x86_64.AppImage" \
  APPIMAGE_EXTRACT_AND_RUN=1 ./linuxdeploy.AppImage --appdir AppDir --output appimage
 python3 "$root/make-self-contained.py" "$root/dist/Audacity-3.0.2-linux-x86_64.AppImage" "$root/dist/Audacity-3.0.2-linux-x86_64.run"
-# Complete build inputs: patched Audacity/wxWidgets, packaging, exact distro sources.
-tar --exclude=.git --exclude=wxWidgets/libs \
- -czf "$root/dist/Audacity-3.0.2-corresponding-source.tar.gz" \
- src wxWidgets source-dependencies -C "$root" build-appimage.sh collect-library-sources.py bundle-runtime.py make-self-contained.py AppRun patches audacity-3.0.2.desktop LICENSE.txt
-cd "$root/dist"
-sha256sum ./*.AppImage ./*.run ./*.tar.gz > SHA256SUMS
+if [[ ${BINARY_ONLY:-0} != 1 ]]; then make_source_archive; fi

@@ -27,7 +27,7 @@ jobs:
           path: work
           key: audacity-ubuntu22-v1-${{ hashFiles('patches/**') }}
       - name: Package AppImage
-        run: ./build-appimage.sh
+        run: BINARY_ONLY=1 ./build-appimage.sh
       - uses: actions/upload-artifact@v4
         with:
           name: executable-debug
@@ -40,6 +40,8 @@ jobs:
           xvfb-run -a python3 ../smoke-test.py squashfs-root/AppRun
       - name: Verify no extra packages or FUSE are needed
         run: python3 clean-desktop-test.py
+      - name: Package corresponding source for the verified binary
+        run: SOURCE_ONLY=1 ./build-appimage.sh
       - uses: actions/upload-artifact@v4
         if: always()
         with:
