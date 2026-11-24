@@ -44,7 +44,7 @@ cp "$root/LICENSE.txt" AppDir/usr/share/doc/audacity/COPYING
 ARCH=x86_64 VERSION=3.0.2 OUTPUT="$root/dist/Audacity-3.0.2-linux-x86_64.AppImage" \
  APPIMAGE_EXTRACT_AND_RUN=1 ./linuxdeploy.AppImage --appdir AppDir --output appimage
 # Complete build inputs: patched Audacity/wxWidgets, packaging, exact distro sources.
-tar --exclude=.git --exclude=build --exclude=libs --exclude=dist --exclude=work \
+tar --exclude=.git --exclude=wxWidgets/libs \
  -czf "$root/dist/Audacity-3.0.2-corresponding-source.tar.gz" \
  src wxWidgets source-dependencies -C "$root" build-appimage.sh collect-library-sources.py AppRun patches audacity-3.0.2.desktop LICENSE.txt
 cd "$root/dist"
