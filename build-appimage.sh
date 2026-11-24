@@ -31,7 +31,7 @@ curl -fL --retry 3 https://github.com/linuxdeploy/linuxdeploy/releases/download/
 chmod +x linuxdeploy.AppImage
 # FFmpeg is loaded with dlopen, so explicitly deploy the compatible major versions.
 APPIMAGE_EXTRACT_AND_RUN=1 ./linuxdeploy.AppImage --appdir AppDir \
- --desktop-file "$root/audacity-3.0.2.desktop" --icon-file src/images/audacity.png \
+ --desktop-file "$root/audacity-3.0.2.desktop" --icon-file src/images/audacity.svg \
  --library /usr/lib/x86_64-linux-gnu/libavcodec.so.58 \
  --library /usr/lib/x86_64-linux-gnu/libavformat.so.58 \
  --library /usr/lib/x86_64-linux-gnu/libavutil.so.56
