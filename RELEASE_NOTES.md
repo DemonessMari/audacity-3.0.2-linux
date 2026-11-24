@@ -16,3 +16,5 @@ Settings and temporary projects are isolated from existing Audacity and Tenacity
 The workflow verifies WAV import in an unmodified Ubuntu 22.04 base container, without installing dependency packages or exposing a FUSE device. See the linked successful build run for the completed checks.
 
 Community build, not an official Audacity release. Original authors retain their copyrights and licenses.
+
+Completed verification: [clean-container build and tests](https://github.com/DemonessMari/audacity-3.0.2-linux/actions/runs/45391874421), plus launch and WAV import on an Arch Linux desktop. The automatic launcher also handles an existing AppImageLauncher installation without an integration prompt for its internal payload.
