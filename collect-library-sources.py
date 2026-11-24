@@ -7,6 +7,7 @@ for line in subprocess.check_output(['ldconfig', '-p'], text=True).splitlines():
     if ' => ' in line:
         path = line.split(' => ')[1].strip()
         lookup.setdefault(pathlib.Path(path).name, path)
+        lookup.setdefault(pathlib.Path(path).resolve().name, path)
 packages = set()
 manifest = []
 for lib in sorted((appdir / 'usr/lib').rglob('*.so*')):
