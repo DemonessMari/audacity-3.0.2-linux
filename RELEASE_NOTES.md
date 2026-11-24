@@ -1,25 +1,18 @@
-Unofficial historical Audacity 3.0.2 build for **x86_64 Linux**.
+Unofficial Audacity 3.0.2 for x86_64 Linux.
 
-Download `Audacity-3.0.2-linux-x86_64.AppImage`, make it executable, and open it. No root access or replacement of installed Audacity/Tenacity is required.
-
-```sh
-chmod +x Audacity-3.0.2-linux-x86_64.AppImage
-./Audacity-3.0.2-linux-x86_64.AppImage
-```
-
-If FUSE is unavailable:
+**Recommended download: `Audacity-3.0.2-linux-x86_64.run`.** Make it executable and open it. It unpacks and runs automatically; users do not need to install FUSE, GTK, wxWidgets, FFmpeg, fonts, or additional application packages. No administrator access is needed.
 
 ```sh
-./Audacity-3.0.2-linux-x86_64.AppImage --appimage-extract
-./squashfs-root/AppRun
+chmod +x Audacity-3.0.2-linux-x86_64.run
+./Audacity-3.0.2-linux-x86_64.run
 ```
 
-Built on Ubuntu 22.04, targeting compatible newer x86_64 Linux desktops with X11/XWayland and glibc 2.35 or later. This is not a Windows, macOS, ARM, or universally compatible Linux binary. The package bundles customized wxWidgets and compatible FFmpeg 4.4 libraries. Existing system libraries are not downgraded.
+This update bundles libraries that AppImage tooling normally expects the host to provide. It includes fonts and a complete linked-library dependency closure, apart from the Linux platform C runtime. The AppImage remains available as an alternative format.
 
-Settings: `~/.config/audacity-3.0.2` (or the corresponding XDG_CONFIG_HOME path). Temporary projects use a separate cache directory. Existing Audacity/Tenacity preferences are not migrated or modified.
+Supported base: an existing x86_64 Linux desktop with glibc 2.35+ and X11/XWayland. Other operating systems and older Linux bases need different builds; installing or upgrading system libraries is not part of this package's instructions.
 
-`SHA256SUMS` verifies the release assets. The corresponding-source archive includes patched Audacity and wxWidgets, build scripts, and exact Ubuntu source packages for bundled libraries. Bundled copyright notices and a dependency manifest are included in the AppImage.
+Settings and temporary projects are isolated from existing Audacity and Tenacity installations. `SHA256SUMS`, corresponding source, bundled copyright notices, and a dependency manifest are provided.
 
-This is a community build, not an official Audacity release. Audacity and library authors retain their copyrights; see the included licenses.
+The workflow verifies WAV import in an unmodified Ubuntu 22.04 base container, without installing dependency packages or exposing a FUSE device. See the linked successful build run for the completed checks.
 
-Verified: launch and generated 44.1 kHz WAV import on Ubuntu 22.04 under Xvfb and on an Arch Linux desktop. A symbol audit of 155 bundled ELF files found a maximum GLIBC requirement of 2.35. These are launch/import checks; recording hardware and every plugin have not been tested.
+Community build, not an official Audacity release. Original authors retain their copyrights and licenses.

@@ -1,33 +1,28 @@
 # Historical Audacity 3.0.2 for Linux
 
-Unofficial community build of Audacity 3.0.2. This repository is not affiliated with or endorsed by the Audacity project.
+Unofficial community build, not affiliated with or endorsed by the Audacity project.
 
-The downloadable x86_64 AppImage is built on Ubuntu 22.04 (glibc 2.35 baseline). It is intended for compatible newer x86_64 Linux desktops with X11 or XWayland. It does not run on Windows, macOS, ARM, or Linux systems with older glibc. Launch and WAV import were verified on Ubuntu 22.04 under Xvfb and an Arch Linux desktop. Compatibility with every distribution is not promised.
+## Download and run
 
-## Run
-
-Download the AppImage from Releases, make it executable in your file manager, and open it. No root access or package replacement is required.
+Use **Audacity-3.0.2-linux-x86_64.run** from Releases. Make it executable in your file manager and open it. It automatically unpacks and runs: no FUSE, GTK, wxWidgets, FFmpeg, fonts, or other application packages need to be installed separately. No root access is needed.
 
 ```sh
-chmod +x Audacity-3.0.2-linux-x86_64.AppImage
-./Audacity-3.0.2-linux-x86_64.AppImage
+chmod +x Audacity-3.0.2-linux-x86_64.run
+./Audacity-3.0.2-linux-x86_64.run
 ```
 
-If FUSE is unavailable, extract and run:
+The AppImage is also available for users who prefer that format. The `.run` download handles extraction automatically, including on systems without FUSE.
 
-```sh
-./Audacity-3.0.2-linux-x86_64.AppImage --appimage-extract
-./squashfs-root/AppRun
-```
+The supported platform is an existing **x86_64 Linux desktop with glibc 2.35 or newer and X11/XWayland**. This is an operating-system compatibility baseline, not a request to install or upgrade libraries. Windows, macOS, ARM, and older Linux bases require different builds. The package includes the full linked-library dependency closure except the Linux platform C runtime, plus fonts and compatible FFmpeg 4.4.
 
-Settings are kept in `$XDG_CONFIG_HOME/audacity-3.0.2` (default `~/.config/audacity-3.0.2`). Existing Audacity and Tenacity settings are not migrated or modified. Temporary projects use a separate cache directory. Existing `.aup3` projects are not opened automatically; use copies when testing historical software.
+Settings: `$XDG_CONFIG_HOME/audacity-3.0.2` (default `~/.config/audacity-3.0.2`). Existing Audacity and Tenacity settings are not migrated or modified. Temporary projects and launcher cache use a separate cache directory.
 
-## Build
+## Validation and source
 
-The GitHub Actions workflow lists the Ubuntu 22.04 dependencies. Run `./build-appimage.sh` after installing them. The original Audacity source archive is verified by SHA-256, and the customized wxWidgets fork is pinned to commit `837669d3fa63febf0fca8cdd532abaf38a22c82a`.
+The build workflow checks launch and WAV import, then runs the `.run` file in an **unmodified Ubuntu 22.04 base container**, with no dependency installation and no FUSE device. See release notes for completed verification results.
 
-The small patches add missing standard headers, remove an obsolete integer macro, update an old CMake minimum, and allow a separate settings directory. C11 is selected for older C code. The Ubuntu build uses FFmpeg 4.4, including dynamically loaded libraries in the AppImage. No host libraries are downgraded.
+`SHA256SUMS` covers the release assets. The corresponding-source archive includes patched Audacity, customized wxWidgets and its vendored sources, packaging scripts, and exact Ubuntu source packages for bundled libraries and fonts. Copyright notices and a dependency manifest are included in the application.
 
-Release assets include checksums and the corresponding source archive: patched Audacity, customized wxWidgets and its vendored sources, packaging scripts, and exact Ubuntu source packages for bundled libraries. Copyright notices and a dependency manifest are included in the AppImage.
+The workflow lists packages needed by developers to compile the application; end users do not need to install those packages. Audacity's source tarball is verified by SHA-256, and wxWidgets is pinned to `837669d3fa63febf0fca8cdd532abaf38a22c82a`. Compatibility patches add standard headers, replace an obsolete integer macro, update an old CMake minimum, and allow isolated preferences. No host libraries are downgraded.
 
-Audacity is distributed under GPLv2 or later; bundled libraries retain their own licenses. See `LICENSE.txt` and the included notices.
+Audacity is distributed under GPLv2 or later; bundled libraries retain their own licenses. See `LICENSE.txt` and included notices.

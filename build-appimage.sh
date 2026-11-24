@@ -39,15 +39,17 @@ APPIMAGE_EXTRACT_AND_RUN=1 ./linuxdeploy.AppImage --appdir AppDir \
  --library /usr/lib/x86_64-linux-gnu/libavutil.so.56
 cp "$root/AppRun" AppDir/AppRun
 chmod +x AppDir/AppRun
+python3 "$root/bundle-runtime.py" AppDir
 # Preserve licensing notices and collect exact distro source archives for bundled libraries.
 mkdir -p AppDir/usr/share/doc/bundled-libraries source-dependencies
 python3 "$root/collect-library-sources.py" AppDir source-dependencies
 cp "$root/LICENSE.txt" AppDir/usr/share/doc/audacity/COPYING
 ARCH=x86_64 VERSION=3.0.2 OUTPUT="$root/dist/Audacity-3.0.2-linux-x86_64.AppImage" \
  APPIMAGE_EXTRACT_AND_RUN=1 ./linuxdeploy.AppImage --appdir AppDir --output appimage
+python3 "$root/make-self-contained.py" "$root/dist/Audacity-3.0.2-linux-x86_64.AppImage" "$root/dist/Audacity-3.0.2-linux-x86_64.run"
 # Complete build inputs: patched Audacity/wxWidgets, packaging, exact distro sources.
 tar --exclude=.git --exclude=wxWidgets/libs \
  -czf "$root/dist/Audacity-3.0.2-corresponding-source.tar.gz" \
- src wxWidgets source-dependencies -C "$root" build-appimage.sh collect-library-sources.py AppRun patches audacity-3.0.2.desktop LICENSE.txt
+ src wxWidgets source-dependencies -C "$root" build-appimage.sh collect-library-sources.py bundle-runtime.py make-self-contained.py AppRun patches audacity-3.0.2.desktop LICENSE.txt
 cd "$root/dist"
-sha256sum ./*.AppImage ./*.tar.gz > SHA256SUMS
+sha256sum ./*.AppImage ./*.run ./*.tar.gz > SHA256SUMS

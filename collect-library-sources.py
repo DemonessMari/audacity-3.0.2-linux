@@ -8,13 +8,18 @@ for line in subprocess.check_output(['ldconfig', '-p'], text=True).splitlines():
         path = line.split(' => ')[1].strip()
         lookup.setdefault(pathlib.Path(path).name, path)
         lookup.setdefault(pathlib.Path(path).resolve().name, path)
-packages = set()
+packages = {subprocess.check_output(['dpkg-query','-W','-f=${source:Package}=${source:Version}','fonts-dejavu-core'],text=True)}
+font_notice=pathlib.Path('/usr/share/doc/fonts-dejavu-core/copyright')
+shutil.copyfile(font_notice, appdir / 'usr/share/doc/bundled-libraries/fonts-dejavu-core-copyright')
 manifest = []
 for lib in sorted((appdir / 'usr/lib').rglob('*.so*')):
     if lib.name.startswith('libwx'):
         manifest.append({'library': lib.name, 'source': 'wxWidgets source included in archive'})
         continue
     host = lookup.get(lib.name)
+    if not host:
+        candidates = list(pathlib.Path('/usr/lib/x86_64-linux-gnu').rglob(lib.name))
+        if candidates: host = str(candidates[0])
     if not host:
         raise RuntimeError(f'Cannot identify source package for {lib}')
     owned = None
