@@ -33,6 +33,7 @@ for name in ['DejaVuSans.ttf','DejaVuSans-Bold.ttf','DejaVuSansMono.ttf']:
 configdir=app/'usr/share/fontconfig'
 shutil.copytree('/etc/fonts',configdir,dirs_exist_ok=True,symlinks=False)
 config=configdir/'fonts.conf'
-text=config.read_text().replace('<dir>/usr/share/fonts</dir>', '<dir prefix="relative">../fonts</dir>')
+text=config.read_text().replace('<dir>/usr/share/fonts</dir>', '<dir>@AUDACITY_FONT_DIR@</dir>')
 text=text.replace('<dir>/usr/local/share/fonts</dir>', '')
+text=text.replace('>conf.d</include>', '>@AUDACITY_FONTCONFIG_DIR@/conf.d</include>')
 config.write_text(text)

@@ -6,10 +6,21 @@ export ALSA_CONFIG_PATH="$APPDIR/usr/share/alsa/alsa.conf"
 export ALSA_CONFIG_DIR="$APPDIR/usr/share/alsa"
 export ALSA_PLUGIN_DIR="$APPDIR/usr/lib/alsa-lib"
 export FONTCONFIG_PATH="$APPDIR/usr/share/fontconfig"
-export FONTCONFIG_FILE="$APPDIR/usr/share/fontconfig/fonts.conf"
 export LD_LIBRARY_PATH="$APPDIR/usr/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 export AUDACITY_PATH="$APPDIR/usr/share/audacity"
 export AUDACITY_302_SETTINGS_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/audacity-3.0.2"
 mkdir -p "$AUDACITY_302_SETTINGS_DIR" "${XDG_CACHE_HOME:-$HOME/.cache}/audacity-3.0.2/tmp"
 export TMPDIR="${XDG_CACHE_HOME:-$HOME/.cache}/audacity-3.0.2/tmp"
+# Older fontconfig cannot resolve prefix="relative"; create absolute paths
+# for this launch without requiring fonts/configuration from the host.
+font_dir_xml=$(printf '%s' "$APPDIR/usr/share/fonts" | sed 's/\&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g')
+font_config_dir_xml=$(printf '%s' "$APPDIR/usr/share/fontconfig" | sed 's/\&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g')
+export FONTCONFIG_FILE=$(mktemp "$TMPDIR/fonts.XXXXXX.conf")
+while IFS= read -r line || [[ -n "$line" ]]; do
+ case "$line" in
+  *'@AUDACITY_FONT_DIR@'*) printf '%s%s%s\n' "${line%%@AUDACITY_FONT_DIR@*}" "$font_dir_xml" "${line#*@AUDACITY_FONT_DIR@}" ;;
+  *'@AUDACITY_FONTCONFIG_DIR@'*) printf '%s%s%s\n' "${line%%@AUDACITY_FONTCONFIG_DIR@*}" "$font_config_dir_xml" "${line#*@AUDACITY_FONTCONFIG_DIR@}" ;;
+  *) printf '%s\n' "$line" ;;
+ esac
+done < "$APPDIR/usr/share/fontconfig/fonts.conf" > "$FONTCONFIG_FILE"
 exec "$APPDIR/usr/bin/audacity" "$@"
