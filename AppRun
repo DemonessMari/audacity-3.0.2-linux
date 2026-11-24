@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+APPDIR=${APPDIR:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)}
+export LD_LIBRARY_PATH="$APPDIR/usr/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+export AUDACITY_PATH="$APPDIR/usr/share/audacity"
+export AUDACITY_302_SETTINGS_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/audacity-3.0.2"
+mkdir -p "$AUDACITY_302_SETTINGS_DIR" "${XDG_CACHE_HOME:-$HOME/.cache}/audacity-3.0.2/tmp"
+export TMPDIR="${XDG_CACHE_HOME:-$HOME/.cache}/audacity-3.0.2/tmp"
+exec "$APPDIR/usr/bin/audacity" "$@"

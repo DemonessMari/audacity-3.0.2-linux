@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Audacity 3.0.2 (Historical)
+Comment=Unofficial historical Audacity build with separate settings
+Exec=audacity %F
+Icon=audacity
+Terminal=false
+Categories=AudioVideo;Audio;AudioVideoEditing;

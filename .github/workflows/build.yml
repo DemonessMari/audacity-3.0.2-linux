@@ -1,0 +1,33 @@
+name: Build historical Audacity
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  appimage:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build dependencies
+        run: |
+          sudo sed -i 's/^# deb-src/deb-src/' /etc/apt/sources.list
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake ninja-build git curl patch pkg-config gettext libgtk-3-dev libasound2-dev libjack-jackd2-dev libexpat1-dev libmp3lame-dev libsndfile1-dev libsoxr-dev libsqlite3-dev libavcodec-dev libavformat-dev libavutil-dev libid3tag0-dev libmad0-dev vamp-plugin-sdk libogg-dev libvorbis-dev libflac-dev libflac++-dev liblilv-dev lv2-dev libsuil-dev libportmidi-dev libportsmf-dev libsbsms-dev libsoundtouch-dev libtwolame-dev libfuse2 xvfb xdotool imagemagick
+      - name: Build and package
+        run: ./build-appimage.sh
+      - name: Verify launch
+        run: |
+          cd work
+          ../dist/Audacity-3.0.2-linux-x86_64.AppImage --appimage-extract > /dev/null
+          xvfb-run -a python3 ../smoke-test.py squashfs-root/AppRun
+      - uses: actions/upload-artifact@v4
+        with:
+          name: audacity-3.0.2-linux-x86_64
+          path: |
+            dist/*
+            work/launch-test.log
+            work/launch-test.png
+          retention-days: 30

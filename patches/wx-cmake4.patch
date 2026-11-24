@@ -1,0 +1,11 @@
+--- a/build/cmake/modules/cotire.cmake
++++ b/build/cmake/modules/cotire.cmake
+@@ -37,7 +37,7 @@
+ if (NOT CMAKE_SCRIPT_MODE_FILE)
+ 	cmake_policy(PUSH)
+ endif()
+-cmake_minimum_required(VERSION 2.8.12)
++cmake_minimum_required(VERSION 3.5)
+ if (NOT CMAKE_SCRIPT_MODE_FILE)
+ 	cmake_policy(POP)
+ endif()
