@@ -20,6 +20,7 @@ if [ ! -x "$payload" ]; then
  mv "$temporary" "$payload"
  trap - EXIT HUP INT TERM
 fi
+export APPIMAGELAUNCHER_DISABLE=1
 exec "$payload" --appimage-extract-and-run "$@"
 exit 1
 '''.replace('@HASH@',digest)

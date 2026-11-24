@@ -36,4 +36,13 @@ jobs:
           test "$(gh api "repos/$GH_REPO/actions/runs/$SOURCE_RUN" --jq .conclusion)" = success
           source_sha=$(gh api "repos/$GH_REPO/actions/runs/$SOURCE_RUN" --jq .head_sha)
           (cd release/dist && sha256sum -c SHA256SUMS)
-          gh release create "$RELEASE_TAG" release/dist/*.AppImage release/dist/*.run release/dist/*.tar.gz release/dist/SHA256SUMS --draft --target "$source_sha" --title "Audacity 3.0.2 — self-contained Linux build 2" --notes-file RELEASE_NOTES.md
+          draft_state=$(gh release view "$RELEASE_TAG" --json isDraft --jq .isDraft 2>/dev/null || true)
+          if [ "$draft_state" = true ]; then
+            gh release upload "$RELEASE_TAG" release/dist/*.AppImage release/dist/*.run release/dist/*.tar.gz release/dist/SHA256SUMS --clobber
+            gh release edit "$RELEASE_TAG" --target "$source_sha" --notes-file RELEASE_NOTES.md
+          elif [ "$draft_state" = false ]; then
+            echo 'Refusing to replace a published release' >&2
+            exit 1
+          else
+            gh release create "$RELEASE_TAG" release/dist/*.AppImage release/dist/*.run release/dist/*.tar.gz release/dist/SHA256SUMS --draft --target "$source_sha" --title "Audacity 3.0.2 — self-contained Linux build 2" --notes-file RELEASE_NOTES.md
+          fi
