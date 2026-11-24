@@ -2,7 +2,7 @@
 
 Unofficial community build of Audacity 3.0.2. This repository is not affiliated with or endorsed by the Audacity project.
 
-The downloadable x86_64 AppImage is built on Ubuntu 22.04 (glibc 2.35 baseline). It is intended for compatible newer x86_64 Linux desktops with X11 or XWayland. It does not run on Windows, macOS, ARM, or Linux systems with older glibc. See release notes for actual testing; compatibility with every distribution is not promised.
+The downloadable x86_64 AppImage is built on Ubuntu 22.04 (glibc 2.35 baseline). It is intended for compatible newer x86_64 Linux desktops with X11 or XWayland. It does not run on Windows, macOS, ARM, or Linux systems with older glibc. Launch and WAV import were verified on Ubuntu 22.04 under Xvfb and an Arch Linux desktop. Compatibility with every distribution is not promised.
 
 ## Run
 
