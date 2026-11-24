@@ -16,7 +16,7 @@ if [[ ! -d src ]]; then
  patch -d wxWidgets -p1 < "$root/patches/wx-cmake4.patch"
 fi
 cmake -S src -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr \
- -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_C_STANDARD=11 -Daudacity_use_wxwidgets=local \
+ -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_C_STANDARD=11 -Daudacity_use_wxwidgets=local \
  -DWXWIN="$work/wxWidgets" -DwxBUILD_TOOLKIT=gtk3 -DwxUSE_WEBVIEW=OFF \
  -DwxUSE_LIBTIFF=sys -DwxUSE_LIBPNG=sys -DwxUSE_LIBJPEG=sys -DwxUSE_ZLIB=sys -DwxUSE_EXPAT=sys \
  -Daudacity_use_ffmpeg=loaded -Daudacity_use_pch=yes
@@ -27,6 +27,8 @@ mkdir -p AppDir/usr/lib
 cp -a build/lib/libwx*.so* AppDir/usr/lib/
 cp "$root/AppRun" AppDir/AppRun
 chmod +x AppDir/AppRun
+if [[ ${BUILD_ONLY:-0} == 1 ]]; then exit 0; fi
+export LD_LIBRARY_PATH="$work/AppDir/usr/lib:$work/AppDir/usr/lib/audacity${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 curl -fL --retry 3 https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage -o linuxdeploy.AppImage
 chmod +x linuxdeploy.AppImage
 # FFmpeg is loaded with dlopen, so explicitly deploy the compatible major versions.

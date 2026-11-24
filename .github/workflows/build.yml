@@ -14,7 +14,19 @@ jobs:
           sudo sed -i 's/^# deb-src/deb-src/' /etc/apt/sources.list
           sudo apt-get update
           sudo apt-get install -y build-essential cmake ninja-build git curl patch pkg-config gettext libgtk-3-dev libasound2-dev libjack-jackd2-dev libexpat1-dev libmp3lame-dev libsndfile1-dev libsoxr-dev libsqlite3-dev libavcodec-dev libavformat-dev libavutil-dev libid3tag0-dev libmad0-dev vamp-plugin-sdk libogg-dev libvorbis-dev libflac-dev libflac++-dev liblilv-dev lv2-dev libsuil-dev libportmidi-dev libportsmf-dev libsbsms-dev libsoundtouch-dev libtwolame-dev libfuse2 xvfb xdotool imagemagick
-      - name: Build and package
+      - uses: actions/cache/restore@v4
+        id: build-cache
+        with:
+          path: work
+          key: audacity-ubuntu22-v1-${{ hashFiles('patches/**') }}
+      - name: Compile and install
+        run: BUILD_ONLY=1 ./build-appimage.sh
+      - uses: actions/cache/save@v4
+        if: steps.build-cache.outputs.cache-hit != 'true'
+        with:
+          path: work
+          key: audacity-ubuntu22-v1-${{ hashFiles('patches/**') }}
+      - name: Package AppImage
         run: ./build-appimage.sh
       - name: Verify launch
         run: |
