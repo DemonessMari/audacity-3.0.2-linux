@@ -1,6 +1,9 @@
 import os, pathlib, subprocess, sys, time, wave, math, struct
 launcher = pathlib.Path(sys.argv[1]).resolve()
 env = dict(os.environ, XDG_CONFIG_HOME=str(pathlib.Path('test-config').resolve()), XDG_CACHE_HOME=str(pathlib.Path('test-cache').resolve()))
+settings = pathlib.Path(env['XDG_CONFIG_HOME']) / 'audacity-3.0.2'
+settings.mkdir(parents=True, exist_ok=True)
+(settings / 'audacity.cfg').write_text('[GUI]\nShowSplashScreen=0\n')
 test_audio = pathlib.Path('audacity-portable-test.wav').resolve()
 with wave.open(str(test_audio), 'wb') as audio:
     audio.setparams((1, 2, 44100, 0, 'NONE', 'not compressed'))
