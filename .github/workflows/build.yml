@@ -13,7 +13,7 @@ jobs:
         run: |
           sudo sed -i 's/^# deb-src/deb-src/' /etc/apt/sources.list
           sudo apt-get update
-          sudo apt-get install -y build-essential cmake ninja-build git curl patch pkg-config gettext libgtk-3-dev libasound2-dev libasound2-plugins libjack-jackd2-dev libexpat1-dev libmp3lame-dev libsndfile1-dev libsoxr-dev libsqlite3-dev libavcodec-dev libavformat-dev libavutil-dev libid3tag0-dev libmad0-dev vamp-plugin-sdk libogg-dev libvorbis-dev libflac-dev libflac++-dev liblilv-dev lv2-dev libsuil-dev libportmidi-dev libportsmf-dev libsbsms-dev libsoundtouch-dev libtwolame-dev libfuse2 fonts-dejavu-core xvfb xdotool imagemagick
+          sudo apt-get install -y build-essential cmake ninja-build git curl patch pkg-config gettext libgtk-3-dev libasound2-dev libasound2-plugins libjack-jackd2-dev libexpat1-dev libmp3lame-dev libsndfile1-dev libsoxr-dev libsqlite3-dev libavcodec-dev libavformat-dev libavutil-dev libid3tag0-dev libmad0-dev vamp-plugin-sdk libogg-dev libvorbis-dev libflac-dev libflac++-dev liblilv-dev lv2-dev libsuil-dev libportmidi-dev libportsmf-dev libsbsms-dev libsoundtouch-dev libtwolame-dev libfuse2 fonts-dejavu-core xvfb wmctrl xdotool imagemagick
       - uses: actions/cache/restore@v4
         id: build-cache
         with:
@@ -28,6 +28,11 @@ jobs:
           key: audacity-ubuntu22-v1-${{ hashFiles('patches/**') }}
       - name: Package AppImage
         run: ./build-appimage.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: executable-debug
+          path: dist/*.AppImage
+          retention-days: 3
       - name: Verify launch
         run: |
           cd work
@@ -35,6 +40,16 @@ jobs:
           xvfb-run -a python3 ../smoke-test.py squashfs-root/AppRun
       - name: Verify no extra packages or FUSE are needed
         run: python3 clean-desktop-test.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: diagnostics
+          path: |
+            work/launch-test.log
+            work/launch-test.png
+            work/clean-runtime.log
+            work/clean-runtime.png
+          retention-days: 3
       - uses: actions/upload-artifact@v4
         with:
           name: audacity-3.0.2-linux-x86_64

@@ -24,6 +24,9 @@ with open('launch-test.log', 'w') as log:
                     break
             time.sleep(1)
         else:
+            print(pathlib.Path('launch-test.log').read_text(), flush=True)
+            print(subprocess.run(['wmctrl', '-lp'], capture_output=True, text=True).stdout, flush=True)
+            subprocess.run(['import', '-window', 'root', 'launch-test.png'])
             raise RuntimeError('No imported test waveform window within 90 seconds')
     finally:
         app.terminate()
