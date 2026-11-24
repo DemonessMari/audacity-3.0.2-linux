@@ -4,7 +4,7 @@
     //       expects the ".audacity" portion to be a directory.
     if (gDataDir.empty())
     {
-+      const auto isolated = wxGetenv(wxT("AUDACITY_302_SETTINGS_DIR"));
++      const wxString isolated = wxGetenv(wxT("AUDACITY_302_SETTINGS_DIR"));
 +      if (!isolated.empty())
 +         return gDataDir = FileNames::MkDir(isolated);
        // If there is a directory "Portable Settings" relative to the
