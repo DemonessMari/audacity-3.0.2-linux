@@ -25,6 +25,10 @@ if [[ ! -d src ]]; then
  test "$(git -C wxWidgets rev-parse HEAD)" = 837669d3fa63febf0fca8cdd532abaf38a22c82a
  patch -d wxWidgets -p1 < "$root/patches/wx-cmake4.patch"
 fi
+# Apply this guard to both fresh source and an older restored build cache.
+if ! grep -q 'while (fontSize > 2' src/src/widgets/NumericTextCtrl.cpp; then
+ patch -d src -p1 < "$root/patches/font-sizing.patch"
+fi
 cmake -S src -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr \
  -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_C_STANDARD=11 -Daudacity_use_wxwidgets=local \
  -DWXWIN="$work/wxWidgets" -DwxBUILD_TOOLKIT=gtk3 -DwxUSE_WEBVIEW=OFF \

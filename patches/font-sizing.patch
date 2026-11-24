@@ -1,0 +1,34 @@
+--- a/src/widgets/NumericTextCtrl.cpp
++++ b/src/widgets/NumericTextCtrl.cpp
+@@ -1524,25 +1524,27 @@
+    if (boxH == 0) {
+       boxH = mDigitBoxH;
+    }
+-   boxH -= (mBorderTop + mBorderBottom);
++   // Keep font fitting within valid sizes even with different font metrics.
++   boxW = std::max(1, boxW);
++   boxH = std::max(1, boxH - (mBorderTop + mBorderBottom));
+ 
+    // We can use the screen device context since we're not drawing to it
+    wxScreenDC dc;
+ 
+    // First calculate a rough point size
+    wxFont pf(wxSize(boxW, boxH), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
+-   int fontSize = pf.GetPointSize();
++   int fontSize = std::max(2, pf.GetPointSize());
+    wxCoord strW;
+    wxCoord strH;
+ 
+    // Now decrease it until we fit within our digit box
+    dc.SetFont(pf);
+    dc.GetTextExtent(wxT("0"), &strW, &strH);
+-   while (strW > boxW || strH > boxH) {
++   while (fontSize > 2 && (strW > boxW || strH > boxH)) {
+       dc.SetFont(wxFont(--fontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+       dc.GetTextExtent(wxT("0"), &strW, &strH);
+    }
+-   fontSize--;
++   fontSize = std::max(2, fontSize - 1);
+ 
+    // Create the digit font with the new point size
+    if (update) {
