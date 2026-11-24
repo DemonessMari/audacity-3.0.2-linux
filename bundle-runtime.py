@@ -5,6 +5,12 @@ import os,re,shutil,subprocess,sys
 app=Path(sys.argv[1]).resolve();libdir=app/'usr/lib'
 base={'libc.so.6','libm.so.6','libdl.so.2','libpthread.so.0','librt.so.1','libresolv.so.2','libutil.so.1','libanl.so.1','ld-linux-x86-64.so.2'}
 env=dict(os.environ,LD_LIBRARY_PATH=str(libdir)+':'+str(libdir/'audacity'))
+# ALSA loads configuration and PulseAudio integration dynamically, not via ELF dependencies.
+alsa_config=app/'usr/share/alsa'
+shutil.copytree('/usr/share/alsa',alsa_config,dirs_exist_ok=True)
+alsa_plugins=libdir/'alsa-lib';alsa_plugins.mkdir(parents=True,exist_ok=True)
+for name in ['libasound_module_pcm_pulse.so','libasound_module_ctl_pulse.so']:
+ shutil.copyfile(Path('/usr/lib/x86_64-linux-gnu/alsa-lib')/name,alsa_plugins/name)
 seen=set();queue=[app/'usr/bin/audacity']+list(libdir.rglob('*.so*'))+list((app/'usr/share/audacity/modules').glob('*.so'))
 while queue:
  file=queue.pop()

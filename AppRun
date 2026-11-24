@@ -2,6 +2,9 @@
 set -euo pipefail
 APPDIR=${APPDIR:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)}
 export GDK_BACKEND="${GDK_BACKEND:-x11}"
+export ALSA_CONFIG_PATH="$APPDIR/usr/share/alsa/alsa.conf"
+export ALSA_CONFIG_DIR="$APPDIR/usr/share/alsa"
+export ALSA_PLUGIN_DIR="$APPDIR/usr/lib/alsa-lib"
 export FONTCONFIG_FILE="$APPDIR/usr/share/fontconfig/fonts.conf"
 export LD_LIBRARY_PATH="$APPDIR/usr/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 export AUDACITY_PATH="$APPDIR/usr/share/audacity"
